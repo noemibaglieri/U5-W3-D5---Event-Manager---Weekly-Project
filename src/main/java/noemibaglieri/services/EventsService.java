@@ -20,8 +20,8 @@ public class EventsService {
     private EventsRepository eventsRepository;
 
     public Event createEvent(NewEventDTO payload, User organiser) {
-        if (!organiser.getRole().name().equals("EVENT_MANAGER")) {
-            throw new BadRequestException("Only event organisers can create events");
+        if (!organiser.getRole().name().equals("EVENT_MANAGER") && !organiser.getRole().name().equals("ADMIN")) {
+            throw new BadRequestException("Only event organisers or admins can create events");
         }
 
         if (payload.date().isBefore(LocalDateTime.now())) {
