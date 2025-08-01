@@ -1,6 +1,5 @@
 package noemibaglieri.controllers;
 
-import jakarta.validation.Valid;
 import noemibaglieri.entities.Event;
 import noemibaglieri.entities.User;
 import noemibaglieri.payloads.NewEventDTO;
@@ -9,20 +8,21 @@ import noemibaglieri.services.EventsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/events")
-public class EventController {
+public class EventsController {
 
     @Autowired
     private EventsService eventService;
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('EVENT_MANAGER', 'ADMIN')")
-    public Event create(@RequestBody @Valid NewEventDTO payload) {
+    public Event create(@RequestBody @Validated NewEventDTO payload) {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return eventService.createEvent(payload, currentUser);
     }
@@ -41,7 +41,7 @@ public class EventController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('EVENT_MANAGER', 'ADMIN')")
-    public Event update(@PathVariable long id, @RequestBody @Valid UpdateEventDTO payload) {
+    public Event update(@PathVariable long id, @RequestBody @Validated UpdateEventDTO payload) {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return eventService.updateEvent(id, payload, currentUser);
     }
