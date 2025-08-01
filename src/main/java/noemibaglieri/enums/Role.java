@@ -1,5 +1,5 @@
 package noemibaglieri.enums;
 
 public enum Role {
-    USER, EVENT_MANAGER
+    USER, EVENT_MANAGER, ADMIN
 }

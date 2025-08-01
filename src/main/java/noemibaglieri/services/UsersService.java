@@ -3,6 +3,7 @@ package noemibaglieri.services;
 import noemibaglieri.entities.User;
 import noemibaglieri.enums.Role;
 import noemibaglieri.exceptions.BadRequestException;
+import noemibaglieri.exceptions.EmailAlreadyExistsException;
 import noemibaglieri.exceptions.NotFoundException;
 import noemibaglieri.payloads.NewUserDTO;
 import noemibaglieri.repositories.UsersRepository;
@@ -28,9 +29,11 @@ public class UsersService {
             throw new BadRequestException("This username * " + payload.username() + " * is already in use!");
         });
 
-        if(this.userRepository.existsByEmail(payload.email())) throw new RuntimeException("This email * " + payload.email() + " * is already in use!");
+        if(userRepository.existsByEmail(payload.email())) {
+            throw new EmailAlreadyExistsException("This email * " + payload.email() + " * is already in use!");
+        }
 
-        User newUser = new User(payload.username(), payload.email(), bCrypt.encode(payload.password()),payload.role());
+        User newUser = new User(payload.username(), payload.email(), bCrypt.encode(payload.password()));
         this.userRepository.save(newUser);
         return newUser;
     }
@@ -48,4 +51,12 @@ public class UsersService {
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    public User updateUserRole(Long userId, Role newRole) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+
+        user.setRole(newRole);
+        return userRepository.save(user);
+    }
+
 }

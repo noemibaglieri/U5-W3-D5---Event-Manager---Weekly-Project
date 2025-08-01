@@ -60,6 +60,12 @@ public class ExceptionsHandler {
         );
     }
 
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT) // 409
+    public ErrorsDTO handleEmailExists(EmailAlreadyExistsException ex) {
+        return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
+    }
+
     @ExceptionHandler(NoBookingsFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorsDTO handleNoBookings(NoBookingsFoundException ex) {
